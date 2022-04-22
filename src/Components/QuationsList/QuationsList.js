@@ -1,16 +1,15 @@
 import { useSelector , useDispatch } from 'react-redux';
 import { selectedQuiz } from '../../redux/quizzes/quizzes-selectors'
 import {getCountCorrectAnswersQuiz , getCountWrongAnswersQuiz , getTimeQuiz} from '../../redux/quizStatistics/quisStatistics-selectors';
-import {getCountAllQuizzes , getTotalQuestions , getAvarageTime , getTotalCorrectAnswers} from '../../redux/generalStatistics/generalStatistics-selectors';
+import {getCountAllQuizzes , getTotalQuestions , getAllTime , getTotalCorrectAnswers} from '../../redux/generalStatistics/generalStatistics-selectors';
 import generalStatisticsActions from '../../redux/generalStatistics/generalStatistics-actions'; 
 import { Link } from "react-router-dom";
 import quizStatisticsActions from '../../redux/quizStatistics/quisStatistics-actions';
 import { RadioGroup, RadioButton } from 'react-radio-buttons';
 import { useEffect, useState } from 'react';
+import s from './Quations.module.css'
 
 export default function QuationsList (){
-
-    let allAnswers = [];
   
     const dispatch = useDispatch()
 
@@ -18,7 +17,7 @@ export default function QuationsList (){
     const [ currentQuestionAnswer , setCurrentQuestionAnswer] = useState('')
     const [ startTime , setStartTime] = useState(0)
 
-    //const [ allAnswersState , setAllAnswers] = useState([])
+    const [ allAnswersState , setAllAnswers] = useState([])
 
     const questions = useSelector(selectedQuiz);
     const countCorrectAnswers = useSelector(getCountCorrectAnswersQuiz);
@@ -26,13 +25,23 @@ export default function QuationsList (){
 
     const countAllQuizzes = useSelector(getCountAllQuizzes);
     const totalQuestions = useSelector(getTotalQuestions)
-    const avarageTime = useSelector(getAvarageTime)
+    const aLLTime = useSelector(getAllTime)
 
-    useEffect(() =>{       
-        setStartTime(Date.now())  
-    } ,[ ])
+    useEffect(()=>{
+        setStartTime(Date.now()) 
+    } , [ ])
+    //  useEffect(() =>{       
+    //         questions.forEach((question , index) => {
+    //           let allAnswersQuiz = [ ...question.incorrect_answers , question.correct_answer]
+    //           allAnswersQuiz.sort(() => Math.random() - 0.5);
 
-    
+    //           setAllAnswers(prevstate =>  [...prevstate , {id : index ,allAnswersQuiz}])
+              
+
+    //          })            
+             
+    //  } ,[ questions ]) 
+
     const onRadioBtnChange = (value) => {
         setCurrentQuestionAnswer(value)
     }
@@ -50,16 +59,12 @@ export default function QuationsList (){
         dispatch(quizStatisticsActions.countWrongAnswersQuiz(countWrongAnswersQuiz + 1))
        }
       
-
        setCurrentQuestionAnswer('')
        setIndexElem(indexElem + 1)
-    
     }
 
     const timeQuiz = ( start , end) => {
-
         const time = (end - start)/1000 ;
-        
         return time
     }
 
@@ -70,7 +75,7 @@ export default function QuationsList (){
        dispatch(quizStatisticsActions.timeQuiz( timeQuiz(startTime , Date.now())))
         
         //GeneralInformation
-        dispatch(generalStatisticsActions.averageTime( avarageTime + timeQuiz(startTime , Date.now())))
+        dispatch(generalStatisticsActions.aLLTime( aLLTime + timeQuiz(startTime , Date.now())))
         dispatch(generalStatisticsActions.countOfAllQuizzes(countAllQuizzes + 1))
         dispatch(generalStatisticsActions.totalQuestions(totalQuestions + questions.length))
        
@@ -84,16 +89,22 @@ export default function QuationsList (){
 
    
     return(
+       
         <>
-        {/* <h1>{quizName}</h1> */}
-        <ul>
+        <h1 className={s.category_name} >Questions</h1>
+        <ol className={s.questions_list}>
             {questions.map((question , index) =>{
+
                 let allAnswers = [ ...question.incorrect_answers , question.correct_answer]
-                allAnswers.sort(() => Math.random() - 0.5);
+
+                //here I randomly went through the array  to shuffle all the answers 
+                //but they shuffled every time I clicked the Asnwer button
+
+                //allAnswers.sort(() => Math.random() - 0.5);
 
              //To do this, the user could not answer the following quetion until he answered current quetion
                let isDisabled = true;
-               if(index === 0){
+               if(indexElem === index === 0){
                    isDisabled = false
                }
                if(indexElem === index){
@@ -101,32 +112,35 @@ export default function QuationsList (){
                }
          
                 return(
-                    <li key={index}>
-                        <p>{question.question}</p>
+                    <li key={index} className={s.question_item}>
+                        <p className={s.number_of_question}>{index + 1})</p>
+                        <p className={s.question}>{question.question}</p>
                         <form onSubmit={(e) => {  
                             e.preventDefault()
                             savedAnswer(question.correct_answer  )}
                             }>
-                        <RadioGroup onChange={onRadioBtnChange}  horizontal>
-                            {allAnswers.map((answer, index) =>{
+                       
+                       <RadioGroup onChange={onRadioBtnChange}   >
+                             {allAnswers.map((answer, index) =>{
                                 return (
-                                    <RadioButton key={index} disabled={isDisabled} value={answer}>
+                                    <RadioButton key={index} rootColor='#000000' pointColor="#1e46bd" disabled={isDisabled} value={answer}>
                                         {answer}
-                                     </RadioButton>
+                                    </RadioButton>
                                 )
-                            })}
-                        </RadioGroup>
-                        <button disabled={isDisabled}  type='submit'>Answer</button>
+                            })} 
+   
+                        </RadioGroup> 
+                        <button className={s.button_answer} disabled={isDisabled}  type='submit'>Answer</button>
                         </form>
                     </li>
                 )
             })}
-        </ul>
+        </ol>
 
-        <Link to='/' onClick={onCancel} >Cancel and go to Home Page</Link>
-
-        <Link to='/results'  onClick={onFinished}>Finish</Link>
-      
+        <div className={s.links_wrapper}>
+            <Link to='/' className={s.cancel} onClick={onCancel} >Cancel and go to Home Page</Link>
+            <Link to='/results' className={s.finish}  onClick={onFinished}>Finish</Link>
+        </div>
         </>
     )
 }

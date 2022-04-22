@@ -10,8 +10,8 @@ const totalQuestions = createReducer(0, {
     [actions.totalQuestions]: ( _, { payload }) => payload,
 });
 
-const avarageTime = createReducer(0, {
-    [actions.averageTime]: ( _, { payload }) => payload,
+const aLLTime = createReducer(0, {
+    [actions.aLLTime]: ( _, { payload }) => payload,
 });
 
 const totalCorrectAnswers = createReducer(0, {
@@ -23,6 +23,6 @@ const totalCorrectAnswers = createReducer(0, {
 export default combineReducers({
     countOfAllQuizzes,
     totalQuestions,
-    avarageTime,
+    aLLTime,
     totalCorrectAnswers
 });
