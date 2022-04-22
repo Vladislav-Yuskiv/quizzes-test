@@ -3,7 +3,6 @@ import quizzesReducer from './quizzes/quizzes-reducer';
 import generaStatisticsReducer from './generalStatistics/generaStatistics-reducers';
 import quisStatisticsReducer from './quizStatistics/quisStatistics-reducer';
 import loaderReducer from './loader/loaderReducer';
-import logger from "redux-logger";
 import {
   persistStore,
   persistReducer,

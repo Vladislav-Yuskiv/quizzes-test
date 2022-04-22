@@ -6,14 +6,13 @@ import {quizzesCategories } from '../../redux/quizzes/quizzes-selectors';
 import LuckyButton from '../LuckyButton';
 import s from './QuizzesList.module.css';
 
+
 const axios = require('axios');
 
 
 const  getRndInteger = (minimum, maximum) => {
     return Math.floor(Math.random() * (maximum - minimum)) + minimum;
 }
-
-
 
 export default function QuizzesList (){
 
@@ -30,28 +29,26 @@ export default function QuizzesList (){
       })
     }
 
-
-    return(<> 
-
-
-                <ul className={s.quizzes_list}>
-                    {quizzes.map((quizze) => {
-                        const amout = getRndInteger(8,23)
-                        return (
-                            <li key={quizze.id} className={s.quizzes_item} onClick={() => selectedQuiz(amout , quizze.id)}> 
-                            <div className={s.quiz_info}>   
-                                    <p className={s.name}> {quizze.name}</p>
-                                    <p className={s.countQuestions}>The number of questions in the quiz: <span className={s.amout}>{amout}</span></p>
-                                <Link className={s.run_button} to={`quizze/${quizze.id}`} >
-                                    Run
-                                </Link>
-                            </div> 
-                                <img className={s.quiz_photo} src="https://i.ibb.co/zfGPxQs/quiz.jpg" alt="quizPhoto" ></img>
-                            </li>
-                        )
-                    })}
-                </ul>
-          <LuckyButton selectedQuiz={selectedQuiz} getRndInteger={getRndInteger} />
-           </>
-    )
+        return(
+                <> 
+                    <ul className={s.quizzes_list}>
+                        {quizzes.map((quizze) => {
+                            const amout = getRndInteger(8,23)
+                            return (
+                                <li key={quizze.id} className={s.quizzes_item} onClick={() => selectedQuiz(amout , quizze.id)}> 
+                                <div className={s.quiz_info}>   
+                                        <p className={s.name}> {quizze.name}</p>
+                                        <p className={s.countQuestions}>The number of questions in the quiz: <span className={s.amout}>{amout}</span></p>
+                                    <Link className={s.run_button} to={`quizze/${quizze.id}`} >
+                                        Run
+                                    </Link>
+                                </div> 
+                                    <img className={s.quiz_photo} src="https://i.ibb.co/zfGPxQs/quiz.jpg" alt="quizPhoto" ></img>
+                                </li>
+                            )
+                        })}
+                    </ul>
+            <LuckyButton selectedQuiz={selectedQuiz} getRndInteger={getRndInteger} />
+            </>
+        )
 }

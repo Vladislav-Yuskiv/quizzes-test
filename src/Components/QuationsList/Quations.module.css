@@ -66,3 +66,9 @@
    width: 120px;
    background-color: #c5cf06;
 }
+.message{
+    color: rgb(135, 18, 18);
+    font-weight: 400;
+    font-size: 18px;
+}
+

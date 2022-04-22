@@ -14,6 +14,7 @@ export default function HomePage (){
        //If you press the back arrow, the statistics are cleared and the statistics work correctly
     dispatch(quizStatisticsActions.countCorrectAnswersQuiz(0)) 
     dispatch(quizStatisticsActions.countWrongAnswersQuiz(0))
+    dispatch(quizStatisticsActions.timeQuiz(0))
      
    } )
     return(

@@ -1,12 +1,13 @@
 import { useSelector , useDispatch } from 'react-redux';
 import { selectedQuiz } from '../../redux/quizzes/quizzes-selectors'
-import {getCountCorrectAnswersQuiz , getCountWrongAnswersQuiz , getTimeQuiz} from '../../redux/quizStatistics/quisStatistics-selectors';
-import {getCountAllQuizzes , getTotalQuestions , getAllTime , getTotalCorrectAnswers} from '../../redux/generalStatistics/generalStatistics-selectors';
+import {getCountCorrectAnswersQuiz , getCountWrongAnswersQuiz } from '../../redux/quizStatistics/quisStatistics-selectors';
+import {getCountAllQuizzes , getTotalQuestions , getAllTime , getTotalCorrectAnswers } from '../../redux/generalStatistics/generalStatistics-selectors';
 import generalStatisticsActions from '../../redux/generalStatistics/generalStatistics-actions'; 
 import { Link } from "react-router-dom";
 import quizStatisticsActions from '../../redux/quizStatistics/quisStatistics-actions';
 import { RadioGroup, RadioButton } from 'react-radio-buttons';
 import { useEffect, useState } from 'react';
+import {decode} from 'html-entities';
 import s from './Quations.module.css'
 
 export default function QuationsList (){
@@ -17,8 +18,6 @@ export default function QuationsList (){
     const [ currentQuestionAnswer , setCurrentQuestionAnswer] = useState('')
     const [ startTime , setStartTime] = useState(0)
 
-    const [ allAnswersState , setAllAnswers] = useState([])
-
     const questions = useSelector(selectedQuiz);
     const countCorrectAnswers = useSelector(getCountCorrectAnswersQuiz);
     const countWrongAnswersQuiz = useSelector(getCountWrongAnswersQuiz);
@@ -26,21 +25,12 @@ export default function QuationsList (){
     const countAllQuizzes = useSelector(getCountAllQuizzes);
     const totalQuestions = useSelector(getTotalQuestions)
     const aLLTime = useSelector(getAllTime)
+    const totalCorrectAnswers = useSelector(getTotalCorrectAnswers)
 
     useEffect(()=>{
         setStartTime(Date.now()) 
     } , [ ])
-    //  useEffect(() =>{       
-    //         questions.forEach((question , index) => {
-    //           let allAnswersQuiz = [ ...question.incorrect_answers , question.correct_answer]
-    //           allAnswersQuiz.sort(() => Math.random() - 0.5);
 
-    //           setAllAnswers(prevstate =>  [...prevstate , {id : index ,allAnswersQuiz}])
-              
-
-    //          })            
-             
-    //  } ,[ questions ]) 
 
     const onRadioBtnChange = (value) => {
         setCurrentQuestionAnswer(value)
@@ -65,19 +55,19 @@ export default function QuationsList (){
 
     const timeQuiz = ( start , end) => {
         const time = (end - start)/1000 ;
-        return time
+        return Math.floor(time)
     }
 
     const onFinished = () => {
        
-   
-       //Info for current Quiz
-       dispatch(quizStatisticsActions.timeQuiz( timeQuiz(startTime , Date.now())))
+        //Info for current Quiz
+        dispatch(quizStatisticsActions.timeQuiz( timeQuiz(startTime , Date.now())))
         
         //GeneralInformation
         dispatch(generalStatisticsActions.aLLTime( aLLTime + timeQuiz(startTime , Date.now())))
         dispatch(generalStatisticsActions.countOfAllQuizzes(countAllQuizzes + 1))
         dispatch(generalStatisticsActions.totalQuestions(totalQuestions + questions.length))
+        dispatch(generalStatisticsActions.totalCorrectAnswers(totalCorrectAnswers + countCorrectAnswers))
        
     }
 
@@ -85,6 +75,7 @@ export default function QuationsList (){
     const onCancel = () => {
         dispatch(quizStatisticsActions.countCorrectAnswersQuiz(0))
         dispatch(quizStatisticsActions.countWrongAnswersQuiz(0))
+        dispatch(quizStatisticsActions.timeQuiz(0))
     }
 
    
@@ -96,7 +87,6 @@ export default function QuationsList (){
             {questions.map((question , index) =>{
 
                 let allAnswers = [ ...question.incorrect_answers , question.correct_answer]
-
                 //here I randomly went through the array  to shuffle all the answers 
                 //but they shuffled every time I clicked the Asnwer button
 
@@ -114,7 +104,7 @@ export default function QuationsList (){
                 return(
                     <li key={index} className={s.question_item}>
                         <p className={s.number_of_question}>{index + 1})</p>
-                        <p className={s.question}>{question.question}</p>
+                        <p className={s.question}>{decode(question.question)}</p>
                         <form onSubmit={(e) => {  
                             e.preventDefault()
                             savedAnswer(question.correct_answer  )}
@@ -124,7 +114,7 @@ export default function QuationsList (){
                              {allAnswers.map((answer, index) =>{
                                 return (
                                     <RadioButton key={index} rootColor='#000000' pointColor="#1e46bd" disabled={isDisabled} value={answer}>
-                                        {answer}
+                                        {decode(answer)}
                                     </RadioButton>
                                 )
                             })} 
@@ -137,10 +127,14 @@ export default function QuationsList (){
             })}
         </ol>
 
-        <div className={s.links_wrapper}>
-            <Link to='/' className={s.cancel} onClick={onCancel} >Cancel and go to Home Page</Link>
-            <Link to='/results' className={s.finish}  onClick={onFinished}>Finish</Link>
-        </div>
+        {questions.length !== 0 &&  <div className={s.links_wrapper}>
+                                        <Link to='/' className={s.cancel} onClick={onCancel} >Cancel </Link>
+                                        {(countCorrectAnswers + countWrongAnswersQuiz) === questions.length ?  <Link to='/results' className={s.finish}  onClick={onFinished}>Finish</Link>
+                                        : <p className={s.message}>You must answer all the questions to finish the quiz!!!</p>}
+                                    </div>
+        }
+
+       
         </>
     )
 }
