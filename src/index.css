@@ -1,0 +1,15 @@
+body{
+ font-family: 'Nunito', sans-serif;
+    background-color: #f8f8f8;
+    padding: 0 15px;
+}
+
+/* allAnswersState.map( ({allAnswers}) =>{
+                    
+}) */
+/* useEffect(() =>{       
+    questions.map(question => {
+        let allAnswers = [ ...question.incorrect_answers , question.correct_answer]
+       setAllAnswers([ ...allAnswersState , ...[{allAnswers}]]) 
+    })
+} ,[ allAnswersState  ]) */

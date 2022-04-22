@@ -1,0 +1,33 @@
+.luckyBtn{
+    display: block;
+    position: absolute;
+    top: 75px;
+    left: 50px;
+    padding: 5px;
+    width: 100px;
+    border-radius: 80px;
+    text-align: center;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 26px;
+    text-decoration: none;
+    background-color: #eb4034;
+    transition: all 250ms ease;
+
+}
+.luckyBtn:hover{
+    transform: scale(1.1);
+    background-color: #c2645d;
+}
+
+@media screen and (min-width: 768px){
+    .luckyBtn{
+        width: 120px;
+        font-size: 26px;
+        padding: 15px;
+        top: 30px;
+        left: 40px;
+    }
+}
+
